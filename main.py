@@ -10,6 +10,8 @@ import logging
 from colorama import init, Fore, Style
 import requests
 import os
+from flask import Flask
+from threading import Thread
 
 # Initialize colorama for colored terminal output
 init()
@@ -287,7 +289,22 @@ async def main():
         print(".", flush=True)
         await asyncio.sleep(min(min_sleep, UPDATE_INTERVAL))
 
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "✅ Bot is alive!"
+
+def run():
+    app.run(host='0.0.0.0', port=8080)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
+
 if __name__ == "__main__":
+
+    keep_alive()
     # Test message to confirm Telegram works
     send_telegram_message("✅ Hello from Binance candle bot! Telegram is working.")
     
